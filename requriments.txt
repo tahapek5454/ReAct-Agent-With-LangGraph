@@ -1,0 +1,17 @@
+langchain
+langgraph
+langchainhub
+langchain-community
+python-dotenv
+langchain-openai
+qdrant-client
+beautifulsoup4
+langchain-qdrant
+pydantic
+langchain-core
+psycopg
+langgraph-checkpoint-postgres
+psycopg2-binary
+psycopg[binary]
+ipython
+langmem
