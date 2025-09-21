@@ -29,7 +29,17 @@ class QdrantVectorDatabaseService:
             print(f"Collection '{collection_name}' created successfully.")
         except Exception as e:
             print(f"Error creating collection: {e}")
-            
+   
+    def get_collections_names(self) -> List[str]:
+        """List all collections in Qdrant"""
+        try:
+            client = QdrantClient(host=self.qdrant_host, port=self.qdrant_port, https=False)
+            collectionsResponse = client.get_collections()
+            return [col.name for col in collectionsResponse.collections]
+        except Exception as e:
+            print(f"Error retrieving collections: {e}")
+            return [] 
+                
     def get_retriever(self, collection_name: str, https: bool = False) -> VectorStoreRetriever | None:
         """Get retriever for the specified collection"""
         try:

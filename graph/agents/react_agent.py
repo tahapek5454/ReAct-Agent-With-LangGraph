@@ -8,6 +8,7 @@ from langmem.short_term import SummarizationNode
 from langgraph.prebuilt.chat_agent_executor import AgentState
 from typing import Any
 from langchain_core.messages.utils import count_tokens_approximately
+from tools.tools import tool_node
 
 load_dotenv()
 
@@ -18,8 +19,6 @@ llm = init_chat_model(
             model_provider="azure_openai"
         )
 
-tools = []
-
 class State(AgentState):
     # NOTE: we're adding this key to keep track of previous summary information
     # to make sure we're not summarizing on every LLM call
@@ -28,19 +27,22 @@ class State(AgentState):
 summarization_node = SummarizationNode(
     token_counter=count_tokens_approximately,
     model=llm,
-    max_tokens=384,
-    max_summary_tokens=128,
+    max_tokens=4096,
+    max_summary_tokens=612,
     output_messages_key="llm_input_messages",
 )
 
 system_prompt = """You are a helpful assistant that provides analysis on various topics."""
 react_agent_graph = create_react_agent(
             model=llm,
-            tools=tools,
+            tools=tool_node,
             prompt=system_prompt,
             checkpointer=checkpointer,
             pre_model_hook=summarization_node,
             state_schema=State,
+            debug=True,
+            version='v2',
+            name="ReactAgent-Demo"
         )
 
 def get_messages(thread_id: str) -> list:
