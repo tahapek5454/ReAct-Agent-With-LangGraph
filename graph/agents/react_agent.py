@@ -8,7 +8,9 @@ from langmem.short_term import SummarizationNode
 from langgraph.prebuilt.chat_agent_executor import AgentState
 from typing import Any
 from langchain_core.messages.utils import count_tokens_approximately
-from tools.tools import tool_node
+from graph.tools.tools import tool_node
+from langchain_core.messages import AnyMessage
+from langchain_core.runnables import RunnableConfig
 
 load_dotenv()
 
@@ -32,15 +34,22 @@ summarization_node = SummarizationNode(
     output_messages_key="llm_input_messages",
 )
 
-system_prompt = """You are a helpful assistant that provides analysis on various topics."""
+
+def prompt(state: State, config: RunnableConfig) -> list[AnyMessage]:  
+    user_name = config["configurable"].get("user_name") or "User" # type: ignore
+    
+    system_msg = f"Sen bir yardımcı asistanısın. Kullanıcı sorularını yanıtlamaya ve ihtiyaç duyduklarında araçları kullanmaya hazırsın. Karşındaki kullanıcıya {user_name} olarak hitap et."
+    
+    return [{"role": "system", "content": system_msg}] + state["messages"] # type: ignore
+
 react_agent_graph = create_react_agent(
             model=llm,
             tools=tool_node,
-            prompt=system_prompt,
+            prompt=prompt, # type: ignore
             checkpointer=checkpointer,
             pre_model_hook=summarization_node,
             state_schema=State,
-            debug=True,
+            debug=False,
             version='v2',
             name="ReactAgent-Demo"
         )

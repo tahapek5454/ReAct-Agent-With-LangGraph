@@ -71,7 +71,7 @@ def search_documents(query: str, collection_name: str, k: int = 5):
         
         retriever.search_kwargs = {"k": k}
     
-        docs = retriever.get_relevant_documents(query)
+        docs = retriever.invoke(query)
         
         if not docs:
             no_results_msg = f"'{query}' sorgusu için '{collection_name}' koleksiyonunda ilgili doküman bulunamadı."

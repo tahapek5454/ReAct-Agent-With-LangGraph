@@ -3,6 +3,8 @@ from psycopg_pool import ConnectionPool
 from psycopg.rows import dict_row
 from langgraph.checkpoint.postgres import PostgresSaver
 
+# Not: Db yi olusturmaniz lazim ornek 'chatbot_db' adinda bir db olusturun
+
 load_dotenv()
 DATABASE_URL = get_key(".env","POSTGRES_CONNECTION_STRING") or ""
 _pool = None
