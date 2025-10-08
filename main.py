@@ -4,9 +4,15 @@ from dotenv import load_dotenv, get_key
 from uuid import uuid4
 from langchain_core.runnables import RunnableConfig
 from langchain_core.messages import HumanMessage
-from graph.agents.react_agent import react_agent_graph
-from postgres_database.postgress_database import cleanup_connections
+from postgres_database.postgress_database import PostgreSQLManager
+from graph.agents.react_agent import ReactAgentManager
 load_dotenv()
+
+sqlManager = PostgreSQLManager()
+if get_key(".env","POSTGRES_SETUP") == "true":
+    sqlManager._setup_database()
+agent = ReactAgentManager(sqlManager.get_checkpointer())
+react_agent_graph = agent.create_agent()
 
 def document_upload_flow():
     collection_name = "demo_collection"
@@ -63,4 +69,4 @@ if __name__ == "__main__":
     else:
         print("Geçersiz seçim.")
         
-    cleanup_connections()
+    sqlManager.cleanup_connections()

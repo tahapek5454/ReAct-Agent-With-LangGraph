@@ -95,10 +95,3 @@ class QdrantVectorDatabaseService:
     def format_docs(self, docs):
         """Format documents into a single string"""
         return "\n\n".join(doc.page_content for doc in docs)
-
-
-
-
-
-
-
